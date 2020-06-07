@@ -22,14 +22,15 @@ using drawNS::APIGnuPlot3D;
 
 int Wektor3D::ile_jest_w;
 int Wektor3D::ile_powstalo_w;
-int bryla::ile_jest_o;
-int bryla::ile_utworzono_o;
+int obiekt::ile_jest_o;
+int obiekt::ile_utworzono_o;
 
-void pokazwektory(){
-  cout<<"powstalo wektorow "<<Wektor3D::zwroc_utworzone<<endl;
-  cout<<"jest wektorow "<<Wektor3D::zwroc_istniejace<<endl;
+void pokazobiekty(){
+  cout<<"powstalo wektorow "<<Wektor3D::zwroc_utworzone()<<endl;
+  cout<<"jest wektorow "<<Wektor3D::zwroc_istniejace()<<endl;
+   cout<<"powstalo obiektow "<<obiekt::zwroc_utworzone()<<endl;
+  cout<<"jest obiektow"<<obiekt::zwroc_istniejace()<<endl;
 }
-
 
 int main(){
   drawNS::APIGnuPlot3D *api=new drawNS::APIGnuPlot3D(-20,20,-20,20,-20,20,0);
@@ -41,22 +42,27 @@ int main(){
   Wektor3D trans=Wektor3D(10,11,-5); 
   Wektor3D tran=Wektor3D(10,15,-10);
   Wektor3D tansik=Wektor3D(-9,-5,12);
- vector<std::shared_ptr<przeszkodapscian>> kolekcja_przeszkod{
-    std::make_shared<przeszkodapscian>(api,translacja,wej,ori), 
-    std::make_shared<przeszkodapscian>(api,tran,wej,ori),
-    std::make_shared<przeszkodapscian>(api,tansik,wej,ori)
-  };
+ vector<std::shared_ptr<przeszkoda>> kolekcja_przeszkod;
+    std::shared_ptr<przeszkodapscian> przeszk1=std::make_shared<przeszkodapscian>(api,translacja,wej,ori);
+    std::shared_ptr<przeszkodapscian> przeszk2=std::make_shared<przeszkodapscian>(api,tran,wej,ori);
+    std::shared_ptr<przeszkodapscian> przeszk3=std::make_shared<przeszkodapscian>(api,tansik,wej,ori);
+  kolekcja_przeszkod.push_back(przeszk1);
+  kolekcja_przeszkod.push_back(przeszk2);
+ kolekcja_przeszkod.push_back(przeszk3);
   vector<std::shared_ptr<in_dron>> kolekcja_Dronow;
     std::shared_ptr<dron> dronik1=std::make_shared<dron>(api,translacja,wej,wirnikl,wirnikl,ori);
     kolekcja_Dronow.push_back(dronik1);
     std:shared_ptr<dron> dronik2=std::make_shared<dron>(api,trans,wej,wirnikl,wirnikl,ori);
     kolekcja_Dronow.push_back(dronik2);
+  kolekcja_przeszkod.push_back(dronik1);
+  kolekcja_przeszkod.push_back(dronik2);
   pow_dna dno(api,translacja,pow,ori);
   pow_morza powi(api,translacja,pow,ori);
+  bool podrozek;
+  bool podroz; bool p;
   double a=0;
   int nr=0;
-  cout<<"powstalo obiektow "<<bryla::zwroc_utworzone<<endl;
-  cout<<"jest obiektow"<<bryla::zwroc_istniejace<<endl;
+  pokazobiekty();
   char wybor[2] = " ";
   cout<<"Menu"<<endl;
   cout<<"podaj numer drona. Dostępny jest 0 albo 1"<<endl;
@@ -82,7 +88,6 @@ int main(){
 
   switch(wybor[0]){
    case '1':{
-     pokazwektory();
      cout<<"nastąpi zmiana dronow do kierowania"<<endl;
      if(nr==0)
      nr=1;
@@ -95,7 +100,6 @@ int main(){
     break;
   }
   case '2':{
-    pokazwektory();
     cout<<"podaj o ile chcesz przemieścić w przod.Uwaga:podanie dodatniej wartosci spowoduje przesuniecie w tyl, a ujemnej w przod"<<endl;
     cin>>a;
     if(cin.fail()){
@@ -108,12 +112,16 @@ int main(){
     kolekcja_Dronow[nr]->przesuneciedronaprzod(1);
     else kolekcja_Dronow[nr]->przesuneciedronaprzod(-1);
     for(int j=0;j<kolekcja_przeszkod.size();++j){
-    bool podroz=kolekcja_przeszkod[j]->czy_kolizja(kolekcja_Dronow[nr]);
+    podroz=kolekcja_przeszkod[j]->czy_kolizja(kolekcja_Dronow[nr]);
     if(podroz==false)
     {
       cerr<<"kolizja drona"<<endl;
-      exit(1);
+      break;
     }
+    }
+    if(podroz==false)
+    {
+      break;
     }
     }
     break;
@@ -122,7 +130,6 @@ int main(){
   case '3':{cout<<"podaj kat, pod jakim dron ma plynac w gore"<<endl; 
     int kat=0;
     cin>>kat;
-    pokazwektory();
      if(cin.fail()){
        cout<<"Blad. Program wroci sie do menu"<<endl;
        cin.clear();
@@ -141,24 +148,18 @@ int main(){
     kolekcja_Dronow[nr]->przesuneciedronaprzod(1);
     else kolekcja_Dronow[nr]->przesuneciedronaprzod(-1);
     for(int j=0;j<kolekcja_przeszkod.size();++j){
-    bool podrozek=kolekcja_przeszkod[j]->czy_kolizja(kolekcja_Dronow[nr]);
-    if(podrozek==false)
+    podrozek=kolekcja_przeszkod[j]->czy_kolizja(kolekcja_Dronow[nr]);
+    podroz=dno.czy_kolizja(kolekcja_Dronow[nr]);
+    p=powi.czy_kolizja(kolekcja_Dronow[nr]);
+    if(podrozek==false || podroz==false || p==false)
     {
       cerr<<"kolizja drona"<<endl;
-      exit(1);
+      break;
     }
     }
-    bool podroz=dno.czy_kolizja(kolekcja_Dronow[nr]);
-    if(podroz==false)
+    if(podrozek==false || podroz==false || p==false)
     {
-      cerr<<"kolizja drona"<<endl;
-      exit(1);
-    }
-    podroz=powi.czy_kolizja(kolekcja_Dronow[nr]);
-    if(podroz==false)
-    {
-      cerr<<"kolizja drona"<<endl;
-      exit(1);
+      break;
     }
     }
     break;}
@@ -173,11 +174,10 @@ int main(){
        cin.ignore(1000, '\n');
     } 
    else kolekcja_Dronow[nr]->obrotz(a);
-   pokazwektory();
     break;}
   
   case '0':{
-  pokazwektory();
+  pokazobiekty();
     cout<<"koniec dzialania programu"<<endl;break;
   }
   default:{

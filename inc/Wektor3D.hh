@@ -137,18 +137,20 @@ static int zwroc_utworzone(){
   return wz;
 }
 bool operator == (const Wektor3D & W2) const{
+  double wartosc=0;
   for(int i=0;i<3;i++){
-    double wartosc=W2._tab[i]-_tab[i];
-    if(0,01>wartosc)
+    wartosc=abs(W2._tab[i]-_tab[i]);
+    if(wartosc>0.01)
     return false;
     else;
   }
  return true;
   }
 bool operator != (const Wektor3D & W2) const{
+ double wartosc=0;
   for(int i=0;i<3;i++){
-    double wartosc=W2._tab[i]-_tab[i];
-    if(0,01<wartosc)
+    wartosc=abs(W2._tab[i]-_tab[i]);
+    if(wartosc<0.01)
     return false;
     else;
   }

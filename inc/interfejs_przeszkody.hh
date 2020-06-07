@@ -5,7 +5,6 @@
 #include <math.h>
 #include<vector>
 #include "interfejs_drona.hh"
-#include "dron.hh"
 #include "Macierz3D.hh"
 #include "Wektor3D.hh"
 #include "pscian.hh"

@@ -16,21 +16,17 @@ MacierzOb orientacja;
 Wektor3D translacja;
 std::shared_ptr<drawNS::Draw3DAPI> api;
 public:
-obiekt(drawNS::Draw3DAPI *Api, Wektor3D trans, MacierzOb ori): api(Api), translacja(trans), orientacja(ori){}
-};
-
-class bryla:public obiekt{
-protected:
-int id=-1;
-public:
 static int ile_jest_o;
 static int ile_utworzono_o;
-bryla(drawNS::Draw3DAPI *Api, Wektor3D trans, MacierzOb ori):obiekt(Api,trans,ori){
-   cout<<"++ile_jest_o"<<endl;
+obiekt(drawNS::Draw3DAPI *Api, Wektor3D trans, MacierzOb ori): api(Api), translacja(trans), orientacja(ori){
+   ++ile_jest_o;
+    ++ile_utworzono_o;
+}
+
+obiekt(const obiekt &b){
     ++ile_jest_o;
     ++ile_utworzono_o;
 }
-virtual int rysuj()=0;
 
 static int zwroc_istniejace(){
   return ile_jest_o;
@@ -38,6 +34,21 @@ static int zwroc_istniejace(){
 static int zwroc_utworzone(){
   return ile_utworzono_o;
 }
+
+~obiekt(){
+ile_jest_o--;
+}
+};
+
+class bryla:public obiekt{
+protected:
+int id=-1;
+public:
+bryla(drawNS::Draw3DAPI *Api, Wektor3D trans, MacierzOb ori):obiekt(Api,trans,ori){
+   
+}
+virtual int rysuj()=0;
+
 void zmienp(const Wektor3D &M){
     Wektor3D tmp=orientacja*M;
      translacja=translacja+tmp;

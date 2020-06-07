@@ -50,6 +50,28 @@ void dron::przesuneciedronaprzod(double a){
   /*}*/
 }
 
+
+bool dron::czy_kolizja(std::shared_ptr<in_dron> dronus){
+Wektor3D sr=dronus->zwroc_translacje();
+Wektor3D wsk=zwroc_translacje();
+if(wsk==sr){
+  return true;
+} 
+float r=dronus->zwroc_srednice();
+int licz=0;
+Wektor3D najmn_tmp=_Wierz_lok[0]+translacja;
+Wektor3D najw_tmp=_Wierz_lok[6]+translacja;
+for(int i=0;i<3;i++){
+if(sr[i]>najmn_tmp[i]-2*r && sr[i]<najw_tmp[i]+2*r){
+licz++;
+}
+else;
+}
+if(licz==3)return false;
+else return true;
+}
+
+
 /*!
    * \brief medota klasy dron. Z zalozenia obraca dronem o zadany kat
    */
